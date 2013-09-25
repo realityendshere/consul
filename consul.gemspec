@@ -18,5 +18,5 @@ Gem::Specification.new do |s|
 
   s.add_dependency('memoizer')
   s.add_dependency('rails')
-  s.add_dependency('edge_rider')
+  # s.add_dependency('edge_rider')
 end

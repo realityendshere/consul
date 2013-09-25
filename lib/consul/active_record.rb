@@ -14,4 +14,4 @@ module Consul
   end
 end
 
-ActiveRecord::Base.send(:extend, Consul::ActiveRecord)
+ActiveRecord::Base.send(:extend, Consul::ActiveRecord) if defined? ActiveRecord
