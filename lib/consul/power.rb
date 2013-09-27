@@ -37,7 +37,13 @@ module Consul
     def default_power_ids(power_name, *args)
       scope = send(power_name, *args)
       database_touched
-      scope.collect_ids
+      if scope.respond_to?("collect_ids")
+        scope.collect_ids
+      elsif scope.respond_to?("only")
+        scope.only('id').pluck(:id)
+      else
+        []
+      end
     end
 
     def powerless!(*args)
