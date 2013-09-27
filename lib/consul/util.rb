@@ -8,10 +8,14 @@ module Consul
       else
         scope = scope.scoped
       end
-      scope_sql = scope.to_sql
-      quoted_table_name = Regexp.quote(scope.connection.quote_table_name(scope.table_name))
-      all_sql_pattern = /\ASELECT (#{quoted_table_name}\.)?\* FROM #{quoted_table_name}\z/
-      scope_sql.squish =~ all_sql_pattern
+      if scope.respond_to? "to_sql"
+        scope_sql = scope.to_sql
+        quoted_table_name = Regexp.quote(scope.connection.quote_table_name(scope.table_name))
+        all_sql_pattern = /\ASELECT (#{quoted_table_name}\.)?\* FROM #{quoted_table_name}\z/
+        scope_sql.squish =~ all_sql_pattern
+      else
+        false
+      end
     end
 
     def scope?(value)
