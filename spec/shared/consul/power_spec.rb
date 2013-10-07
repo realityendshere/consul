@@ -94,6 +94,13 @@ describe Consul::Power do
           @user.power.clients?.should be_true
         end
 
+        it 'should not trigger a query if the power returns a has many association' do
+          Note.count.should > 0 # show that we have records in the database
+          @client1.reload
+          @user.power.client_notes?(@client1)
+          @client1.notes.loaded?.should be_false
+        end
+
       end
 
       context 'with a given record' do
