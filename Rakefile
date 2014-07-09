@@ -7,11 +7,13 @@ task :default => 'all:spec'
 namespace :travis_ci do
 
   desc 'Things to do before Travis CI begins'
-  task :prepare => :slimgems
+  task :prepare => [:compatible_rubygems]
 
-  desc 'Install slimgems'
-  task :slimgems do
-    system('gem install slimgems')
+  desc 'Ensure compatible Rubygems version for Ruby 1.8'
+  task :compatible_rubygems do
+    if RUBY_VERSION == '1.8.7'
+      system "rvm rubygems latest-1.8 --force"
+    end
   end
 
 end
@@ -42,7 +44,14 @@ end
 def for_each_directory_of(path, &block)
   Dir[path].sort.each do |rakefile|
     directory = File.dirname(rakefile)
-    puts '', "\033[44m#{directory}\033[0m", ''
-    block.call(directory)
+    puts '', "\033[4;34m# #{directory}\033[0m", '' # blue underline
+    
+    if directory.include?('rails-2.3') and RUBY_VERSION != '1.8.7'
+      puts 'Skipping - Rails 2.3 requires Ruby 1.8.7'
+    elsif directory.include?('rails-4.1') and RUBY_VERSION == '1.8.7'
+      puts 'Skipping - Rails 4.1 does not support Ruby 1.8'
+    else
+      block.call(directory)
+    end
   end
 end
